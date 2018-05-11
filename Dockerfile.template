@@ -43,7 +43,7 @@ ENV INITSYSTEM on
 COPY --from=0 /usr/src/app .
 
 ## TODO
-RUN echo 'bind_interfaces' > /etc/dnsmasq.conf
+RUN echo 'bind_interfaces' >> /etc/dnsmasq.conf
 
 ## copy files needed for the kiosk application
 COPY splash-black.png /resin-boot/splash/resin-logo.png
