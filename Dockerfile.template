@@ -28,10 +28,17 @@ FROM csmcaleb/resin-wpe:latest
 ENV INITSYSTEM on
 
 ## Doesn't work because this stage doesn't have apt-get in the image
-RUN apt-get update \		
-    && apt-get install -y dnsmasq wireless-tools \
-    && apt-get clean \		
-    && rm -rf /var/lib/apt/lists/*
+# RUN apt-get update \		
+#     && apt-get install -y dnsmasq wireless-tools \
+#     && apt-get clean \		
+#     && rm -rf /var/lib/apt/lists/*
+
+RUN wget http://www.thekelleys.org.uk/dnsmasq/dnsmasq-2.70.tar.gz \
+	&& tar -zxf dnsmasq-2.70.tar.gz \
+	&& cd dnsmasq-2.70 \
+	&& make install \
+	&& systemctl start dnsmasq.service
+
 
 ## copies over the wifi-connect app from the previous (--from=0) stage
 COPY --from=0 /usr/src/app .
