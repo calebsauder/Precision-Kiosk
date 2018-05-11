@@ -37,10 +37,12 @@ ENV INITSYSTEM on
 # 	&& cd dnsmasq-2.70 \
 # 	&& make install \
 # 	&& systemctl start dnsmasq.service
-RUN wget  http://the.mcdemo.biz/dnsmasq.tar.gz \
-	&& tar -zxvf dnsmasq.tar.gz \
-	&& cd dnsmasq-2.70 \
-	&& make install
+
+## failed make
+# RUN wget  http://the.mcdemo.biz/dnsmasq.tar.gz \
+# 	&& tar -zxvf dnsmasq.tar.gz \
+# 	&& cd dnsmasq-2.70 \
+#	&& make install
 
 
 ## copies over the wifi-connect app from the previous (--from=0) stage
