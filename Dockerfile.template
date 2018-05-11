@@ -77,6 +77,7 @@ RUN curl https://api.github.com/repos/resin-io/resin-wifi-connect/releases/lates
     | xargs -n1 curl -Ls \
     | tar -xvz -C /usr/src/app/
 
+COPY ./wpe-init /wpe-init
 COPY scripts/start.sh .
 
 CMD ["sh", "-c", "bash start.sh"] 
