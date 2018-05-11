@@ -1,5 +1,5 @@
 ## our stage
-FROM csmcaleb/resin-wpe:latest
+FROM csmjulian/resin-wpe:eight
 
 ENV INITSYSTEM on
 
