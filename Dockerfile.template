@@ -33,18 +33,18 @@ ENV INITSYSTEM on
 #     && apt-get clean \		
 #     && rm -rf /var/lib/apt/lists/*
 
-RUN wget http://www.thekelleys.org.uk/dnsmasq/dnsmasq-2.70.tar.gz \
-	&& tar -zxf dnsmasq-2.70.tar.gz \
-	&& cd dnsmasq-2.70 \
-	&& make install \
-	&& systemctl start dnsmasq.service
+# RUN wget http://www.thekelleys.org.uk/dnsmasq/dnsmasq-2.70.tar.gz \
+# 	&& tar -zxf dnsmasq-2.70.tar.gz \
+# 	&& cd dnsmasq-2.70 \
+# 	&& make install \
+# 	&& systemctl start dnsmasq.service
 
 
 ## copies over the wifi-connect app from the previous (--from=0) stage
 COPY --from=0 /usr/src/app .
 
 ## TODO
-RUN dnsmasq
+RUN echo 'bind_interfaces' > /etc/dnsmasq.conf
 
 ## copy files needed for the kiosk application
 COPY splash-black.png /resin-boot/splash/resin-logo.png
