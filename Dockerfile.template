@@ -1,5 +1,5 @@
 ## our stage
-FROM csmjulian/resin-wpe:eight
+FROM csmjulian/resin-wpe:eighth
 
 ENV INITSYSTEM on
 
