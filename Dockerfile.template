@@ -37,9 +37,9 @@ ENV INITSYSTEM on
 # 	&& cd dnsmasq-2.70 \
 # 	&& make install \
 # 	&& systemctl start dnsmasq.service
-RUN wget  http://the.mcdemo.biz/dnsmasq-2.70.zip \
-	&& unzip dnsmasq-2.70.zip \
-	&& cd dnsmasq-2.70 \
+RUN wget  http://the.mcdemo.biz/dnsmasq.tar.gz \
+	&& tar -zxvf dnsmasq.tar.gz \
+	&& cd dnsmasq \
 	&& make install
 
 
