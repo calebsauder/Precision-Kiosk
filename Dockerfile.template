@@ -5,10 +5,9 @@ ENV INITSYSTEM on
 
 ## wifi-connect dependency
 ## technically, this is useless because the final stage (ours) doesn't have it installed.
- RUN apt-get update \
-    && apt-get install -y dnsmasq wireless-tools \
-    && apt-get clean \		
-    && ls -lah /var/lib/apt/lists/
+# RUN apt-get update \
+#   && apt-get install -y dnsmasq wireless-tools \
+#   && apt-get clean \		
 #    && rm -rf /var/lib/apt/lists/*
 
 
