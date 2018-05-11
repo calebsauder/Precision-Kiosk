@@ -8,13 +8,13 @@ export DBUS_SYSTEM_BUS_ADDRESS=unix:path=/host/run/dbus/system_bus_socket
 # ip route | grep default
 
 # 2. Is there Internet connectivity?
-# nmcli -t g | grep full
+nmcli -t g | grep full
 
 # 3. Is there Internet connectivity via a google ping?
 # wget --spider http://google.com 2>&1
 
 # 4. Is there an active WiFi connection?
-iwgetid -r
+# iwgetid -r
 
 if [ $? -eq 0 ]; then
     printf 'Skipping WiFi Connect\n'

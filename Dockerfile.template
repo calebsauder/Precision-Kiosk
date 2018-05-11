@@ -27,15 +27,16 @@ FROM csmcaleb/resin-wpe:raspberrypi3-f98d261
 ENV INITSYSTEM on
 
 ## Doesn't work because this stage doesn't have apt-get in the image
-# RUN apt-get update \		
-#     && apt-get install -y dnsmasq wireless-tools \
-#     && apt-get clean \		
-#     && rm -rf /var/lib/apt/lists/*
+RUN apt-get update \		
+    && apt-get install -y dnsmasq wireless-tools \
+    && apt-get clean \		
+    && rm -rf /var/lib/apt/lists/*
 
 ## copies over the wifi-connect app from the previous (--from=0) stage
 COPY --from=0 /usr/src/app .
 
 ## TODO
+RUN dnsmasq
 
 ## copy files needed for the kiosk application
 COPY splash-black.png /resin-boot/splash/resin-logo.png
