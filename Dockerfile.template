@@ -22,7 +22,7 @@ COPY scripts/start.sh .
 
 
 ## our stage
-FROM csmcaleb/resin-wpe:latest
+FROM csmcaleb/resin-wpe:third
 
 ENV INITSYSTEM on
 
