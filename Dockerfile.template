@@ -1,3 +1,25 @@
+## initial stage where wifi-connect is setup
+FROM resin/%%RESIN_MACHINE_NAME%%-debian
+
+ENV INITSYSTEM on
+
+## wifi-connect dependency
+## technically, this is useless because the final stage (ours) doesn't have it installed.
+# RUN apt-get update \
+#   && apt-get install -y dnsmasq wireless-tools \
+#   && apt-get clean \		
+#    && rm -rf /var/lib/apt/lists/*
+
+## downloads and extracts the wifi-connect app
+WORKDIR /usr/src/app
+
+RUN curl https://api.github.com/repos/resin-io/resin-wifi-connect/releases/latest -s \
+    | grep -hoP 'browser_download_url": "\K.*%%RESIN_ARCH%%\.tar\.gz' \
+    | xargs -n1 curl -Ls \
+    | tar -xvz -C /usr/src/app/
+
+COPY scripts/start.sh .
+
 ## our stage
 FROM csmcaleb/resin-wpe:third
 
@@ -52,26 +74,3 @@ CMD ["sh", "-c", "bash start.sh"]
 # more notes on docker stages and commands:
 #	https://docs.docker.com/develop/develop-images/multistage-build/#use-multi-stage-builds
 #	https://docs.docker.com/engine/reference/builder/
-
-## initial stage where wifi-connect is setup
-FROM resin/%%RESIN_MACHINE_NAME%%-debian
-
-ENV INITSYSTEM on
-
-## wifi-connect dependency
-## technically, this is useless because the final stage (ours) doesn't have it installed.
-# RUN apt-get update \
-#   && apt-get install -y dnsmasq wireless-tools \
-#   && apt-get clean \		
-#    && rm -rf /var/lib/apt/lists/*
-
-## downloads and extracts the wifi-connect app
-WORKDIR /usr/src/app
-
-RUN curl https://api.github.com/repos/resin-io/resin-wifi-connect/releases/latest -s \
-    | grep -hoP 'browser_download_url": "\K.*%%RESIN_ARCH%%\.tar\.gz' \
-    | xargs -n1 curl -Ls \
-    | tar -xvz -C /usr/src/app/
-
-COPY scripts/start.sh .
-
