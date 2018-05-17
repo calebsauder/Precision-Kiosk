@@ -17,7 +17,7 @@
 		"RASPBERRY_PI" => [
 			"data_dir" => "/data/",
 			"root_url" => "/",
-			"qa" => true
+			"qa" => false
 		],
 		"MAMP" => [
 			"detect_dir" => "/Applications/MAMP",
