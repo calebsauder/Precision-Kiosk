@@ -82,6 +82,14 @@ body.fullscreen #welcome-screen-wrapper{
 	top: 8px;
 }
 
+.alert {
+	display: inline-block;
+	background: #176d39;
+	border-radius: 6px;
+	color: white;
+	padding: 17px;
+}
+
 /* Set-up Screen */
 #setup-screen-wrapper{
 	position: relative;

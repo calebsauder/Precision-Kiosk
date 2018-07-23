@@ -18,7 +18,7 @@ function initHomePage () {
 					});
 				},
 				show () {
-					this.autoPlayInterval = setTimeout(() => showView('player'), AUTOPLAY_TIMEOUT);
+					//this.autoPlayInterval = setTimeout(() => showView('player'), AUTOPLAY_TIMEOUT);
 				},
 				hide () {
 					clearInterval(this.autoPlayInterval);
@@ -237,6 +237,8 @@ function hitEnterOnPass(event){
 }
 
 function init_network () {
+
+	// Poll to check whether we're connected to the Internet
 	let checkInternetRunning = false;
 	const checkInternet = () => {
 		if (!checkInternetRunning) {
@@ -252,9 +254,12 @@ function init_network () {
 					//console.log(rsp);
 					checkInternetRunning = false;
 					if (rsp['response'] == 'success') {
+						// We have Internet!
 						$('#setup-screen-error-wrapper').removeClass('_show');
 						$('#setup-screen-success-wrapper').addClass('_show');
 						$('#video-wrapper-save-button').show();
+						checkForUpdates(true);
+
 					}
 					else {
 						$('#setup-screen-error-wrapper').addClass('_show');
@@ -272,6 +277,7 @@ function init_network () {
 	setInterval(checkInternet, 2000);
 	checkInternet();
 
+	// Poll to get the list of available networks
 	const lastNetworkList = '';
 	let getNetworksRunning = false;
 	const getNetworks = function () {
@@ -375,7 +381,7 @@ function init_network () {
 	
 	const
 		$password = $('#wifi-setup-input'),
-		$togglePassword = $('#toggle-password-button').click(() =>togglePassword(true));
+		$togglePassword = $('#toggle-password-button').click(() => togglePassword(true));
 	togglePassword();
 
 }
@@ -412,4 +418,60 @@ function connectToNetwork () {
 			}
 		});
 	}
+}
+
+/**
+ * If the kiosk has a pending update check scheduled, then this function runs that update check.
+ * @param {function|boolean} callback - If a callback function is provided, then it will be called once the update check
+ * has completed. If the boolean value TRUE is provided and a update check has been postponed because there was no
+ * network, then the postponed update check will be rerun.
+ */
+function checkForUpdates (callback) {
+
+	const retryUpdateWaitingOnNetwork = callback === true;
+	if (retryUpdateWaitingOnNetwork)
+		callback = $.noop;
+
+	if (+sessionStorage.checkedForUpdates || (+sessionStorage.updateCheckWaitingOnNetwork && retryUpdateWaitingOnNetwork !== true)) { // We already checked for updates
+		/*if (+sessionStorage.showUpdateMessage) { // Was an update just applied?
+			sessionStorage.showUpdateMessage = 0;
+			const $updateAlert = $('#update-alert').show();
+			setTimeout(() => $updateAlert.slideUp(), 3000);
+		}*/
+		callback();
+	}
+
+	else { // We haven't checked for updates yet...let's do that now
+
+		sessionStorage.updateCheckWaitingOnNetwork = false;
+
+		function hideUpdateUI () {
+			swal.close();
+			callback();
+		}
+
+		swal({
+			title: 'Checking for updates...',
+			allowEscapeKey: false,
+			showConfirmButton: false
+		});
+
+		// Do the actual check
+		$.post('ajax/kiosk-controller.php', { action: 'check-for-updates' }, response => {
+			if (response.response == 'success') { // We heard back from git
+				sessionStorage.checkedForUpdates = 1;
+				if (response.git_rsp == 'Already up to date.')
+					hideUpdateUI();
+				else // We just applied updates from git
+					//sessionStorage.showUpdateMessage = 1;
+					location.reload();
+			}
+			else { // If we get here, that means that there's currently no network
+				sessionStorage.updateCheckWaitingOnNetwork = 1;
+				hideUpdateUI();
+			}
+		});
+
+	}
+
 }

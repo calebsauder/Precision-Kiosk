@@ -14,7 +14,8 @@ include("inc/head.inc.php");
 			Detected environment: <b>" . ENV_NAME . "</b>
 		</p>
 	" : ""?>
-	<img id="main-screens-pp-logo" src="img/logo.png">
+	<p><img id="main-screens-pp-logo" src="img/logo.png"></p>
+	<!--<div class='alert' id='update-alert' style='display: none'>You've been updated to the latest and greatest version of the Kiosk software!</div>-->
 	<div id="welcome-screen-button-wrapper">
 		<a href="check-network.php" id="welcome-screen-setup-button" class="welcome-screen-button">
 			<span class="welcome-screen-button-icon"><img class="icon pad-right" src="img/gear.png"></span>Set-up
@@ -57,10 +58,7 @@ include("inc/head.inc.php");
 
 <?php
 
-$ondomready .= ("
-	initHomePage();
-	//initAutoPlay();
-");
+$ondomready .= ("checkForUpdates(initHomePage);");
 
 //$add_to_foot .= "<script src='js/error-logging.js'></script>";
 
