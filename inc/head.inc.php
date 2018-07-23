@@ -8,7 +8,7 @@
 <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Open+Sans:300,400,600">
 <link rel="stylesheet" href="css/font-awesome.min.css">
 <!--link rel="stylesheet" href="css/bootstrap.min.css"-->
-<link rel="stylesheet" href="css/kiosk.css">
+<link rel="stylesheet" href="css/kiosk.css?rn=<?=time()?>">
 <link rel="stylesheet" href="js/libs/sweetalert.1.1.3/sweetalert.min.css">
 <title>Precision Planting Showroom</title>
 </head>
