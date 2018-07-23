@@ -172,7 +172,7 @@
 	}
 	
 	if ($action == "check-for-updates") {
-		// We use preg_replace(...) to remove the trailing newline that shell_exec() returns
+		// The 2>&1 allows us to view output from stderr. See https://stackoverflow.com/a/45808461/863470 for more info
 		exec("git pull 2>&1", $output, $return);
 		$response["git_rsp"] = implode("\n", $output);
 		// 0 means success
