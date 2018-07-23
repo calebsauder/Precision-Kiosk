@@ -7,7 +7,7 @@ include("inc/head.inc.php");
 
 ?>
 <section id="welcome-screen-wrapper" data-view="welcome">
-	<h1 id="welcome-screen-title">Welcome</h1>
+	<h1 id="welcome-screen-title">Welcome Dean!</h1>
 	<?=QA ? "
 		<p id='welcome-screen-debug'>
 			QA mode: <b>On</b><br>
