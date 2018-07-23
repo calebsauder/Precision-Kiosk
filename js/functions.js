@@ -2,14 +2,233 @@ function rn () {
 	return Math.floor(Math.random() * 999999999);
 }
 
-function initAutoPlay () {
-	setTimeout(function () {
-		window.location = 'player.php';
-	}, 30000);
+function initHomePage () {
+
+	// Home page views
+	const
+		AUTOPLAY_TIMEOUT = 30000,
+		$views = $('[data-view]'),
+		views = {
+
+			welcome: {
+				init () {
+					$('#welcome-screen-start-button').click(() => {
+						showView('player');
+						return false;
+					});
+				},
+				show () {
+					this.autoPlayInterval = setTimeout(() => showView('player'), AUTOPLAY_TIMEOUT);
+				},
+				hide () {
+					clearInterval(this.autoPlayInterval);
+				}
+			},
+
+			player: {
+				$player: $('#player'),
+				player: null,
+
+				init () {
+					this.player = this.$player[0];
+				},
+
+				show () {
+
+					const playVideo = index => {
+						clearTimeout(checkIfPlayingTimeout);
+						if (index == 'next') {
+							index = parseInt(this.$player.data('index'));
+							if (isNaN(index)) index = 0;
+							index++;
+						}
+						if (index == 'previous') {
+							index = parseInt(this.$player.data('index'));
+							if (isNaN(index)) index = 0;
+							index--;
+							if (index < 0) index = (playlist.length - 1);
+						}
+						if (index > (playlist.length - 1)) index = 0;
+						const video = playlist[index];
+						$('#v' + playlist[index]['id'])[0].scrollIntoView({
+							behavior: 'smooth'
+						});
+						if (titleFader) {
+							clearTimeout(titleFader);
+							titleFader = false;
+						}
+						$('#video-title').html(video.title).addClass('_show');
+						//player.html('<source src="'+video.video+'" type="video/mp4">Your browser does not support the video tag.');
+						titleFader = setTimeout(function () {
+							$('#video-title').removeClass('_show');
+							titleFader = false;
+						}, 3000);
+						$('#playlist li._show').removeClass('_show');
+						$('#v' + video.id).addClass('_show');
+						this.$player
+							.prop('src', video.video)
+							.data('index', index);
+						this.player.play();
+						checkIfPlayingTimeout = setTimeout(function () {
+							if (
+								this.player.readyState == MEDIA_EL_READY_STATE_HAVE_NOTHING
+								&& this.player.currentTime == 0
+								&& this.player.networkState == MEDIA_EL_NETWORK_STATE_NO_SOURCE
+							)
+								playVideo(index);
+						}, 5000);
+						//console.log(video);
+					}
+
+					function playHotKeyVideo (hotkey) {
+						let gotit = false;
+						for (let i = 0; i < playlist.length; i++) {
+							if ((!gotit) && (playlist[i].hotkey == hotkey + '')) {
+								gotit = true;
+								playVideo(i);
+							}
+						}
+						if (!gotit) console.log('Hot key [' + hotkey + '] unassigned');
+					}
+
+					const
+						MEDIA_EL_READY_STATE_HAVE_NOTHING = 0,
+						MEDIA_EL_NETWORK_STATE_NO_SOURCE = 3,
+						playlist = [];
+
+					let
+						titleFader = false,
+						checkIfPlayingTimeout;
+
+					$('#playlist li').each(function () {
+						const p = $(this);
+						playlist.push({
+							id: p.data('id'),
+							video: p.data('video'),
+							hotkey: p.data('hotkey'),
+							title: p.html()
+						});
+					});
+
+					this.$player.on('ended.player', () => {
+						console.log('ended');
+						playVideo('next');
+					});
+
+					$(window).on({
+						'keyup.player': event => {
+							const keycode = event.which;
+							if (keycode == 32) { // space bar
+								$('#playlist').removeClass('_show');
+							}
+							event.preventDefault();
+						},
+						'keydown.player': event => {
+							const keycode = event.which;
+							console.log(keycode);
+							if (keycode == 37) { // left arrow
+								playVideo('previous');
+							}
+							else if (keycode == 39) { // right arrow
+								playVideo('next');
+							}
+							else if (keycode == 32) { // space bar
+								//playVideo('next');
+								$('#playlist').addClass('_show');
+							}
+							else if (keycode == 13) { // enter
+								playVideo('next');
+							}
+							else if (keycode == 38) { // up
+								playVideo('previous');
+							}
+							else if (keycode == 40) { // down
+								playVideo('next');
+							}
+							else if (keycode == 27) { // esc
+								showView('welcome');
+							}
+							else if (keycode == 48) { // 0
+								playHotKeyVideo(0);
+							}
+							else if (keycode == 49) { // 1
+								playHotKeyVideo(1);
+							}
+							else if (keycode == 50) { // 2
+								playHotKeyVideo(2);
+							}
+							else if (keycode == 51) { // 3
+								playHotKeyVideo(3);
+							}
+							else if (keycode == 52) { // 4
+								playHotKeyVideo(4);
+							}
+							else if (keycode == 53) { // 5
+								playHotKeyVideo(5);
+							}
+							else if (keycode == 54) { // 6
+								playHotKeyVideo(6);
+							}
+							else if (keycode == 55) { // 7
+								playHotKeyVideo(7);
+							}
+							else if (keycode == 56) { // 8
+								playHotKeyVideo(8);
+							}
+							else if (keycode == 57) { // 9
+								playHotKeyVideo(9);
+							}
+							else {
+							}
+							event.preventDefault();
+						}
+					});
+
+					if (playlist.length) {
+						$('#require-setup').removeClass('_show');
+						playVideo(0);
+					}
+					else {
+						$('#require-setup').addClass('_show');
+					}
+				},
+
+				hide () {
+
+					this.player.pause();
+
+					// Unbind all events
+					$('*').add(window).off('.player');
+				}
+
+			}
+
+		};
+	let curView;
+
+	function showView (newView) {
+
+		const $body = $('body');
+
+		if (curView && views[curView].hide) views[curView].hide();
+		$body.removeClass(curView);
+
+		curView = newView;
+
+		$views.hide().filter(`[data-view=${newView}]`).show();
+		$body.addClass(newView);
+		// Add the correct
+		if (views[newView].show) views[newView].show();
+
+	}
+
+	// When the page loads, run all the init functions, and then show the first view
+	$.each(views, (name, view) => { if (view.init) view.init(); });
+	showView($views.eq(0).data('view'));
 }
 
 function hitEnterOnPass(event){
-	var keycode = event.which;
+	const keycode = event.which;
 	if (keycode == 13) {
 		connectToNetwork();
 		event.preventDefault();
@@ -18,8 +237,8 @@ function hitEnterOnPass(event){
 }
 
 function init_network () {
-	var checkInternetRunning = false;
-	var checkInternet = function () {
+	let checkInternetRunning = false;
+	const checkInternet = () => {
 		if (!checkInternetRunning) {
 			checkInternetRunning = 1;
 			//console.log('Check network config...');
@@ -53,9 +272,9 @@ function init_network () {
 	setInterval(checkInternet, 2000);
 	checkInternet();
 
-	var lastNetworkList = '';
-	var getNetworksRunning = false;
-	var getNetworks = function () {
+	const lastNetworkList = '';
+	let getNetworksRunning = false;
+	const getNetworks = function () {
 		if (!getNetworksRunning) {
 			getNetworksRunning = 1;
 			console.log('Scanning for networks...');
@@ -68,8 +287,8 @@ function init_network () {
 				success: function (rsp) {
 					console.log(rsp);
 					getNetworksRunning = false;
-					var s = $('#wifi-setup-select');
-					var v = s.val();
+					const s = $('#wifi-setup-select');
+					let v = s.val();
 					if (rsp['response'] == 'success') {
 						//if (rsp.current_wifi_network != '') {
 						//	$('#current_wifi_network').html('Current network: <strong>'+rsp.current_wifi_network+'</strong>');
@@ -100,16 +319,16 @@ function init_network () {
 						if (rsp.networks.length) {
 							$('li.looking').remove();
 							$('#looking-spinner').addClass('_hide');
-							var curNames = [];
+							const curNames = [];
 							$('#available-networks li').each(function () {
 								curNames.push($(this).html());
 							});
-							var newNames = [];
-							for (var i = 0; i < rsp.networks.length; i++) {
+							const newNames = [];
+							for (let i = 0; i < rsp.networks.length; i++) {
 								newNames.push(rsp.networks[i]);
 								if (curNames.indexOf(rsp.networks[i]) == -1) {
-									var li = $('<li>').html(rsp.networks[i]).click(function () {
-										var me = $(this);
+									const li = $('<li>').html(rsp.networks[i]).click(function () {
+										const me = $(this);
 										$('#available-networks li._selected').each(function () {
 											$(this).removeClass('_selected');
 										});
@@ -161,14 +380,14 @@ function init_network () {
 
 }
 
-var spinnerTimer = false;
+let spinnerTimer = false;
 
 function connectToNetwork () {
-	var network = '';
+	let network = '';
 	$('#available-networks li._selected').each(function () {
 		if (network == '') network = $(this).html();
 	});
-	var params = {
+	const params = {
 		action: 'set-wifi-network',
 		network: network,
 		pass: $('#wifi-setup-input').val()
@@ -179,7 +398,7 @@ function connectToNetwork () {
 	}
 	else {
 		if (spinnerTimer) clearTimeout(spinnerTimer);
-		var spinner = $('#connect-spinner');
+		const spinner = $('#connect-spinner');
 		spinner.addClass('_show');
 		spinnerTimer = setTimeout(function () {
 			spinner.removeClass('_show');
@@ -192,167 +411,5 @@ function connectToNetwork () {
 				//
 			}
 		});
-	}
-}
-
-var titleFader = false;
-
-function init_player () {
-
-	const MEDIA_EL_READY_STATE_HAVE_NOTHING = 0;
-	const MEDIA_EL_NETWORK_STATE_NO_SOURCE = 3;
-
-	var checkIfPlayingTimeout;
-	var playlist = [];
-	$('#playlist li').each(function () {
-		var p = $(this);
-		playlist.push({
-			id: p.data('id'),
-			video: p.data('video'),
-			hotkey: p.data('hotkey'),
-			title: p.html()
-		});
-	});
-	var player = $('#player');
-	var playVideo = function (index) {
-
-		clearTimeout(checkIfPlayingTimeout);
-
-		var nativePlayer = player[0];
-
-		if (index == 'next') {
-			index = parseInt(player.data('index'));
-			if (isNaN(index)) index = 0;
-			index++;
-		}
-		if (index == 'previous') {
-			index = parseInt(player.data('index'));
-			if (isNaN(index)) index = 0;
-			index--;
-			if (index < 0) index = (playlist.length - 1);
-		}
-		if (index > (playlist.length - 1)) index = 0;
-		var video = playlist[index];
-		
-		$( '#v'+playlist[ index ]['id'] )[0].scrollIntoView({
-			behavior:'smooth'
-		});
-		
-		if (titleFader) {
-			clearTimeout(titleFader);
-			titleFader = false;
-		}
-		$('#video-title').html(video.title).addClass('_show');
-		//player.html('<source src="'+video.video+'" type="video/mp4">Your browser does not support the video tag.');
-		titleFader = setTimeout(function () {
-			$('#video-title').removeClass('_show');
-			titleFader = false;
-		}, 3000);
-		$('#playlist li._show').removeClass('_show');
-		$('#v' + video.id).addClass('_show');
-		player.prop('src', video.video);
-		player.data('index', index);
-		nativePlayer.play();
-
-		checkIfPlayingTimeout = setTimeout(function () {
-			if (
-				nativePlayer.readyState == MEDIA_EL_READY_STATE_HAVE_NOTHING
-				&& nativePlayer.currentTime == 0
-				&& nativePlayer.networkState == MEDIA_EL_NETWORK_STATE_NO_SOURCE
-			)
-				playVideo(index);
-		}, 5000);
-
-		//console.log(video);
-	};
-	player[0].addEventListener('ended', function () {
-		console.log('ended');
-		playVideo('next');
-	}, false);
-	var playHotKeyVideo = function (hotkey) {
-		var gotit = false;
-		for (var i = 0; i < playlist.length; i++) {
-			if ((!gotit) && (playlist[i].hotkey == hotkey + '')) {
-				gotit = true;
-				playVideo(i);
-			}
-		}
-		if (!gotit) console.log('Hot key [' + hotkey + '] unassigned');
-	};
-	$(window).on("keyup", function (event) {
-		var keycode = event.which;
-		if (keycode == 32) { // space bar
-			$('#playlist').removeClass('_show');
-		}
-		event.preventDefault();
-		return false;
-	});
-	$(window).on("keydown", function (event) {
-		var keycode = event.which;
-		console.log(keycode);
-		if (keycode == 37) { // left arrow
-			playVideo('previous');
-		}
-		else if (keycode == 39) { // right arrow
-			playVideo('next');
-		}
-		else if (keycode == 32) { // space bar
-			//playVideo('next');
-			$('#playlist').addClass('_show');
-		}
-		else if (keycode == 13) { // enter
-			playVideo('next');
-		}
-		else if (keycode == 38) { // up
-			playVideo('previous');
-		}
-		else if (keycode == 40) { // down
-			playVideo('next');
-		}
-		else if (keycode == 27) { // esc
-			window.location = 'index.php';
-		}
-		else if (keycode == 48) { // 0
-			playHotKeyVideo(0);
-		}
-		else if (keycode == 49) { // 1
-			playHotKeyVideo(1);
-		}
-		else if (keycode == 50) { // 2
-			playHotKeyVideo(2);
-		}
-		else if (keycode == 51) { // 3
-			playHotKeyVideo(3);
-		}
-		else if (keycode == 52) { // 4
-			playHotKeyVideo(4);
-		}
-		else if (keycode == 53) { // 5
-			playHotKeyVideo(5);
-		}
-		else if (keycode == 54) { // 6
-			playHotKeyVideo(6);
-		}
-		else if (keycode == 55) { // 7
-			playHotKeyVideo(7);
-		}
-		else if (keycode == 56) { // 8
-			playHotKeyVideo(8);
-		}
-		else if (keycode == 57) { // 9
-			playHotKeyVideo(9);
-		}
-		else {
-
-		}
-		event.preventDefault();
-		return false;
-	});
-	if (playlist.length) {
-		$('#require-setup').removeClass('_show');
-		playVideo(0);
-	}
-	else {
-		$('#require-setup').addClass('_show');
 	}
 }

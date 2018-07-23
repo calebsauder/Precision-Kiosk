@@ -20,9 +20,9 @@ include("inc/head.inc.php");
 <section id="video-screen-wrapper">
 	<section id="main-video-wrapper">
 		<header id="video-wrapper-header">
-			<a href="index.php" id="video-wrapper-back-button" class="video-header-button">
+			<!--<a href="index.php" id="video-wrapper-back-button" class="video-header-button">
 				<img class="icon pad-right" src="img/chevron-left.png">Back
-			</a>
+			</a>-->
 			<h1 id="video-wrapper-header-title"><img id="video-list-pp-logo" src="img/logo.png">Set-up</h1>
 			<a href="javascript:savePlaylist()" id="video-wrapper-save-button" class="video-header-button">
 				<img class="icon pad-right" src="img/save.png">Save Selection

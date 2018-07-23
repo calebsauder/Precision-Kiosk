@@ -37,10 +37,10 @@ let Kiosk = (function(){
     	// Sort order
     	$('.sort-handles .icon.sort-up').click(function(){
     		const _rollVideoId = $(this).closest('.kiosk-roll-video-wrapper').data('id');
-    		var lastx = false;
-    		for (let x in Kiosk.rollVideos){
+				let lastx = false;
+				for (let x in Kiosk.rollVideos){
 				if (Kiosk.rollVideos[x].id == _rollVideoId){
-					var item = Kiosk.rollVideos[x];
+					const item = Kiosk.rollVideos[x];
 					Kiosk.rollVideos.splice(x,1);
 					Kiosk.rollVideos.splice(lastx,0,item);
 					break;
@@ -52,9 +52,9 @@ let Kiosk = (function(){
 
 		$('.sort-handles .icon.sort-down').click(function(){
     		const _rollVideoId = $(this).closest('.kiosk-roll-video-wrapper').data('id');
-    		var itemx = false;
-    		var item = false;
-    		for (let x in Kiosk.rollVideos){
+			let itemx = false;
+			let item = false;
+			for (let x in Kiosk.rollVideos){
 				if (item){
 					Kiosk.rollVideos.splice(itemx,1);
 					Kiosk.rollVideos.splice(x,0,item);
@@ -189,7 +189,7 @@ let Kiosk = (function(){
 
 })();
 
-var monitorStatus = false;
+let monitorStatus = false;
 
 function syncStatus(){
 	if (monitorStatus) {
@@ -199,7 +199,7 @@ function syncStatus(){
 			data: {
 				action:'sync-status'
 			},
-			success: function(rsp){
+			success: rsp => {
 				console.log(rsp);
 				if (rsp.response == 'success') $('#dimwin_txt').html(rsp.status);
 			}
@@ -215,10 +215,10 @@ function init_playlistConfig(){
 		data: {
 			action:'get-playlist'
 		},
-		success: function(prsp){
-			var vids = [];
-			var saveVids = {};
-			for (var i = 0; i < prsp.data.length; i++) {
+		success: prsp => {
+			const vids = [];
+			const saveVids = {};
+			for (let i = 0; i < prsp.data.length; i++) {
 				vids.push(prsp.data[i].id);
 				saveVids[ prsp.data[i].id ] = prsp.data[i];
 			}
@@ -227,12 +227,12 @@ function init_playlistConfig(){
 				type: "GET",
 				url: 'https://cloud.precisionplanting.com/kiosk/get/',
 				data: {},
-				success: function(rsp){
-				
-					var rollVids = {};
-					for (var i = 0; i < rsp.data.length; i++) {
-						for (var vi = 0; vi < rsp.data[i].videos.length; vi++) {
-							var this_vid = parseInt(rsp.data[i].videos[vi].id);
+				success: rsp => {
+
+					const rollVids = {};
+					for (let i = 0; i < rsp.data.length; i++) {
+						for (let vi = 0; vi < rsp.data[i].videos.length; vi++) {
+							const this_vid = parseInt(rsp.data[i].videos[vi].id);
 							if (vids.indexOf(this_vid) > -1) {
 								rsp.data[i].videos[vi].selected = true;
 								if (!rollVids[ this_vid ]) {
@@ -246,15 +246,15 @@ function init_playlistConfig(){
 							}
 						}
 					}
-					
-					var rollVidsSorted = [];
-					for (var i = 0; i < vids.length; i++) {
+
+					const rollVidsSorted = [];
+					for (let i = 0; i < vids.length; i++) {
 						if (rollVids[ vids[i] ]) rollVidsSorted.push(rollVids[ vids[i] ]);
 					}
-				
+
 					Kiosk.availableVideos = rsp.data;
 					Kiosk.rollVideos = rollVidsSorted;
-					
+
 					Kiosk.loadVideoList(Kiosk.availableVideos);
 					Kiosk.loadRollVideos(Kiosk.rollVideos);
 				}
@@ -264,20 +264,19 @@ function init_playlistConfig(){
 };
 
 function savePlaylist(){
-	var playlist = [];
+	const playlist = [];
 	$('#kiosk-roll-video-list .kiosk-roll-video-wrapper').each(function(){
-		var e = $(this);
-		var video = {
-			id:e.data('id'),
+		const e = $(this);
+		playlist.push({
+			id: e.data('id'),
 			//hotkey:e.find('select.hotkey-select').val(),
-			hotkey:e.find('input.hotKeyInput').val(),
-			title:e.find('.kiosk-roll-video-title').html()
-		};
-		playlist.push(video);
+			hotkey: e.find('input.hotKeyInput').val(),
+			title: e.find('.kiosk-roll-video-title').html()
+		});
 	});
 	monitorStatus = true;
-	var d = $('#dimwin');
-		d.addClass('_show');
+	const d = $('#dimwin');
+	d.addClass('_show');
 		$('#dimwin_txt').html('Downloading video resources for your playlist...');
 	$.ajax({
 		type: "POST",
@@ -286,24 +285,28 @@ function savePlaylist(){
 			action:'save-playlist',
 			data:JSON.stringify(playlist)
 		},
-		success: function(rsp){
+		success: rsp => {
 			console.log(rsp);
 			$('#save-rsp').val(JSON.stringify(rsp));
 			d.removeClass('_show');
-			swal("Sync Complete","Video resources successfully downloaded!","success");
+			swal({
+				title: 'Sync Complete',
+				text: 'Video resources successfully downloaded!',
+				type: 'success'
+			}, () => location = 'index.php');
 			monitorStatus = false;
 		}
 	});
 }
 
 function selectVideoHotKey(e){
-	var e = $(e);
-	var hotKey = e.data('hotkey');
-	var p = e.closest('.hotKeySelect');
-	
+	e = $(e);
+	const hotKey = e.data('hotkey');
+	const p = e.closest('.hotKeySelect');
+
 	$('.hotKeySelect').each(function(){
-		var hk = $(this);
-		var v = hk.find('input.hotKeyInput').val();
+		const hk = $(this);
+		const v = hk.find('input.hotKeyInput').val();
 		if (v == hotKey) {
 			hk.find('input.hotKeyInput').val('');
 			hk.find('.videoHotKeyBtn').html('--');
@@ -312,9 +315,8 @@ function selectVideoHotKey(e){
 	
 	p.find('input.hotKeyInput').val( hotKey );
 	p.find('.videoHotKeyBtn').html( (hotKey !== '') ? hotKey : '--' );
-	var lis = p.find('li');
-	lis.each(function(){
-		var li = $(this);
+	p.find('li').each(function(){
+		const li = $(this);
 		if (li.data('hotkey') === hotKey) {
 			li.addClass('_selected');
 		}
@@ -324,9 +326,8 @@ function selectVideoHotKey(e){
 	});
 	
 	// Save the hotkey to the Kiosk object
-	var videoID = p.closest('.kiosk-roll-video-wrapper').data('id');
 	$.each(Kiosk.rollVideos, function (i, video) {
-		if (video.id == videoID) {
+		if (video.id == p.closest('.kiosk-roll-video-wrapper').data('id')) {
 			video.hotkey = hotKey;
 			return false;
 		}
@@ -340,15 +341,13 @@ function openVideoHotKey(e){
 	$('.hotKeySelect ul._show').each(function(){
 		$(this).removeClass('_show');
 	});
-	var e = $(e);
-	var p = e.closest('.hotKeySelect');
-	var ul = p.find('ul');
-	ul.addClass('_show');
+	e = $(e);
+	e.closest('.hotKeySelect').find('ul').addClass('_show');
 }
 
 function closeVideoHotKeySelect(e){
-	var e = $(e);
-	var ul = e.closest('ul');
+	e = $(e);
+	const ul = e.closest('ul');
 	ul.removeClass('_show');
 }
 

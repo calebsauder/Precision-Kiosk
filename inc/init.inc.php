@@ -5,9 +5,9 @@ date_default_timezone_set('America/Chicago');
 ini_set('display_errors', 1);
 //ini_set('max_execution_time', 3600);
 
-	require "config.inc.php";
+	require_once('kiosk-functions.inc.php');
 
-require_once('kiosk-functions.inc.php');
+	require "config.inc.php";
 
 $tstamp = mktime();
  

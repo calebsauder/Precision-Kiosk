@@ -1,12 +1,12 @@
 <?php
 
 require_once("inc/init.inc.php");
-$body_cls = 'fullscreen player';
+$body_cls = 'fullscreen';
 $data_page = 'welcome';
 include("inc/head.inc.php");
 
 ?>
-<section id="welcome-screen-wrapper">
+<section id="welcome-screen-wrapper" data-view="welcome">
 	<h1 id="welcome-screen-title">Welcome</h1>
 	<?=QA ? "
 		<p id='welcome-screen-debug'>
@@ -19,7 +19,7 @@ include("inc/head.inc.php");
 		<a href="check-network.php" id="welcome-screen-setup-button" class="welcome-screen-button">
 			<span class="welcome-screen-button-icon"><img class="icon pad-right" src="img/gear.png"></span>Set-up
 		</a>
-		<a href="player.php" id="welcome-screen-start-button" class="welcome-screen-button">
+		<a href id="welcome-screen-start-button" class="welcome-screen-button">
 			<span class="welcome-screen-button-icon"><img class="icon pad-right" src="img/play.png"></span>Start Kiosk
 		</a>
 		<?=QA ? "
@@ -36,7 +36,8 @@ include("inc/head.inc.php");
 	<?php
 
 	$n = 1;
-	foreach ($playlist as $video){
+		$playlist = get_playlist();
+		foreach ($playlist as $video){
 		if (file_exists($video_dir.$video['id'].'.mp4')) {
 			echo '<li id="v'.$video['id'].'" data-id="'.$video['id'].'" data-hotkey="'.$video['hotkey'].'" data-video="'.$video_url.$video['id'].'.mp4"><span><img src="img/chevron-right.png"></span>'.$video['title'];
 			if ($video['hotkey'] != '') echo '<div>Hot key: '.$video['hotkey'].'</div>';
@@ -57,8 +58,11 @@ include("inc/head.inc.php");
 <?php
 
 $ondomready .= ("
-	initAutoPlay();
+	initHomePage();
+	//initAutoPlay();
 ");
+
+//$add_to_foot .= "<script src='js/error-logging.js'></script>";
 
 include("inc/foot.inc.php");
 
