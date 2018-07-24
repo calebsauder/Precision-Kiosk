@@ -18,7 +18,7 @@ function initHomePage () {
 					});
 				},
 				show () {
-					//this.autoPlayInterval = setTimeout(() => showView('player'), AUTOPLAY_TIMEOUT);
+					this.autoPlayInterval = setTimeout(() => showView('player'), AUTOPLAY_TIMEOUT);
 				},
 				hide () {
 					clearInterval(this.autoPlayInterval);
