@@ -58,7 +58,10 @@ include("inc/head.inc.php");
 
 <?php
 
-$ondomready .= ("checkForUpdates(initHomePage);");
+$ondomready .= ("
+	DEBUG = " . (isset($_GET["debug"]) ? "true" : "false") . ";
+	checkForUpdates(initHomePage);
+");
 
 //$add_to_foot .= "<script src='js/error-logging.js'></script>";
 

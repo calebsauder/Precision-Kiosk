@@ -18,7 +18,8 @@ function initHomePage () {
 					});
 				},
 				show () {
-					this.autoPlayInterval = setTimeout(() => showView('player'), AUTOPLAY_TIMEOUT);
+					if (!DEBUG)
+						this.autoPlayInterval = setTimeout(() => showView('player'), AUTOPLAY_TIMEOUT);
 				},
 				hide () {
 					clearInterval(this.autoPlayInterval);
@@ -464,7 +465,7 @@ function checkForUpdates (callback) {
 				if (response.git_rsp.toLowerCase().replace(/[^a-z]/g, '') == 'alreadyuptodate')
 					hideUpdateUI();
 				else // We just applied updates from git
-					//sessionStorage.showUpdateMessage = 1;
+					sessionStorage.showUpdateMessage = 1;
 					location.reload();
 			}
 			else { // If we get here, that means that there's currently no network
