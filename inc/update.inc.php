@@ -8,8 +8,13 @@
 		$old_contents = sudo("cat " . AUTOSTART_FILE);
 		if ($old_contents["return"]) {
 			if (strpos($old_contents["output"], "@unclutter") === false) {
-				sudo("apt-get install unclutter");
-				sudo("echo '@unclutter -idle 0.1' >> " . AUTOSTART_FILE);
+				foreach (["apt-get install unclutter", "echo '@unclutter -idle 0.1' >> " . AUTOSTART_FILE] as $cmd) {
+					$ret = sudo($cmd);
+					if (!$ret["return"]) {
+						$update_error = $ret["output"];
+						break;
+					}
+				}
 			}
 			// else - unclutter is already set up!
 		}
