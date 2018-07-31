@@ -16,10 +16,7 @@ function initHomePage () {
 						showView('player');
 						return false;
 					});
-					$('#recheck-for-updates').click(() => {
-						sessionStorage.clear();
-						location.reload();
-					});
+					$('#recheck-for-updates').click(() => sessionStorage.clear());
 				},
 				show () {
 					if (!QA)

@@ -4,9 +4,9 @@ require_once("inc/init.inc.php");
 $body_cls = 'fullscreen';
 $data_page = 'welcome';
 
-if ($action == "reset_updates") {
+if ($_GET["action"] == "reset_updates") {
 	$_SESSION["ran_update_script"] = false;
-	redirect("?qa");
+	redirect(ENV_CONFIG["qa"] ? ROOT_URL : "?qa");
 }
 
 include("inc/head.inc.php");
