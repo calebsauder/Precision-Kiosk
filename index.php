@@ -73,7 +73,6 @@ include("inc/head.inc.php");
 <?php
 
 $ondomready .= ("
-	QA = " . (QA ? "true" : "false") . ";
 	checkForUpdates(initHomePage);
 ");
 

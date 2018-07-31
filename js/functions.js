@@ -435,7 +435,10 @@ function checkForUpdates (callback) {
 	if (retryUpdateWaitingOnNetwork)
 		callback = $.noop;
 
-	if (+sessionStorage.checkedForUpdates || (+sessionStorage.updateCheckWaitingOnNetwork && retryUpdateWaitingOnNetwork !== true)) { // We already checked for updates
+	if (
+		+sessionStorage.checkedForUpdates
+		|| (+sessionStorage.updateCheckWaitingOnNetwork && retryUpdateWaitingOnNetwork !== true)
+	) { // We already checked for updates
 		/*if (+sessionStorage.showUpdateMessage) { // Was an update just applied?
 			sessionStorage.showUpdateMessage = 0;
 			const $updateAlert = $('#update-alert').show();
@@ -448,9 +451,23 @@ function checkForUpdates (callback) {
 
 		sessionStorage.updateCheckWaitingOnNetwork = false;
 
+		/**
+		 * Hide the update UI and call the post-update callback
+		 */
 		function hideUpdateUI () {
 			swal.close();
 			callback();
+		}
+		
+		function showUpdateMessage (title, text, callback) {
+			if (QA)
+				swal({
+					title: title,
+					text: text,
+					type: 'info'
+				}, callback);
+			else
+				callback();
 		}
 
 		swal({
@@ -461,33 +478,33 @@ function checkForUpdates (callback) {
 
 		// Do the actual check
 		$.post('ajax/kiosk-controller.php', { action: 'check-for-updates' }, response => {
+
 			if (response.response == 'success') { // We heard back from git
 
 				sessionStorage.checkedForUpdates = 1;
 				const gitRsp = response.git_rsp;
 
-				function completeUpdate () {
+				showUpdateMessage('git response:', gitRsp, () => {
 					if (gitRsp.split('\n').reverse()[0].toLowerCase().replace(/[^a-z]/g, '') == 'alreadyuptodate')
 						hideUpdateUI();
 					else // We just applied updates from git
 						//sessionStorage.showUpdateMessage = 1;
 						location.reload();
-				}
-
-				if (QA)
-					swal({
-						title: 'git response:',
-						text: gitRsp,
-						type: 'info'
-					}, completeUpdate);
-				else
-					completeUpdate();
+				});
 
 			}
-			else { // If we get here, that means that there's currently no network
-				sessionStorage.updateCheckWaitingOnNetwork = 1;
-				hideUpdateUI();
-			}
+			else // If we get here, that means that there's currently no network
+				showUpdateMessage(
+					'No network connection',
+					`
+						The update check could not be completed because there is no network connection. It will automatically retry
+						when there is network.
+					`,
+					() => {
+						sessionStorage.updateCheckWaitingOnNetwork = 1;
+						hideUpdateUI();
+					}
+				);
 		});
 
 	}

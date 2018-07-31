@@ -179,7 +179,8 @@
 	}
 	
 	if ($action == "check-for-updates") {
-		$ret = sudo("git pull");
+		$cmd = "git pull";
+		$ret = ENV_CONFIG["qa"] ? run_cmd($cmd) : sudo($cmd);
 		$response["git_rsp"] = $ret["output"];
 		// 0 means success
 		if (!$ret["return"])

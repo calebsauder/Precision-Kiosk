@@ -9,6 +9,9 @@
 <script src="js/libs/jquery-ui-1.12.1/jquery-ui.min.js"></script>
 <script src="js/libs/sweetalert.1.1.3/sweetalert.min.js"></script>
 <script src="js/functions.js?rn=<?=time()?>"></script>
+<script>
+	QA = <?=QA ? "true" : "false"?>;
+</script>
 <?=$add_to_foot?>
 <script language="javascript">
 <!--
