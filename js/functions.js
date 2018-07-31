@@ -472,10 +472,9 @@ function checkForUpdates (callback) {
 				function completeUpdate () {
 					if (gitRsp.split('\n').reverse()[0].toLowerCase().replace(/[^a-z]/g, '') == 'alreadyuptodate')
 						hideUpdateUI();
-					else { // We just applied updates from git
-						sessionStorage.showUpdateMessage = 1;
+					else // We just applied updates from git
+						//sessionStorage.showUpdateMessage = 1;
 						location.reload();
-					}
 				}
 
 				if (QA)

@@ -298,3 +298,12 @@
 	function sudo (string $cmd): array {
 		return run_cmd("sudo $cmd");
 	}
+
+	/**
+	 * Shortcut for redirecting
+	 * @param $to
+	 */
+	function redirect ($to = "") {
+		header("Location: $to");
+		die;
+	}

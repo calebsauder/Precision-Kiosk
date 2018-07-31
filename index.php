@@ -3,19 +3,28 @@
 require_once("inc/init.inc.php");
 $body_cls = 'fullscreen';
 $data_page = 'welcome';
+
+if ($action == "reset_updates") {
+	$_SESSION["ran_update_script"] = false;
+	redirect("?qa");
+}
+
 include("inc/head.inc.php");
 
 ?>
 <section id="welcome-screen-wrapper" data-view="welcome">
 	<h1 id="welcome-screen-title">Welcome</h1>
-	<?=QA ? "
-		<p id='welcome-screen-debug'>
-			QA mode: <b>On</b><br>
-			Detected environment: <b>" . ENV_NAME . "</b><br>
-			sudo privileges: <b>" . (SUDO ? "Yes" : "No") . "</b><br>
-			The update script " . (RUNNING_UPDATE_SCRIPT ? "<b>did</b>" : "did <b>not</b>") . " run
-		</p>
-	" : ""?>
+	<?php
+		if (QA)
+			echo "
+				<p id='welcome-screen-debug'>
+					QA mode: <b>On</b>
+					<br>Detected environment: <b>" . ENV_NAME . "</b>
+					<br>The update script " . (RUNNING_UPDATE_SCRIPT ? "<b>did</b>" : "did <b>not</b>") . " run
+					" . (RUNNING_UPDATE_SCRIPT ? "<br>sudo privileges: <b>" . (SUDO ? "Yes" : "No") . "</b>" : "") . "
+				</p>
+			";
+	?>
 	<?=UPDATE_ERROR ? "
 		<div class='alert red'>The update failed with this error: <b>" . UPDATE_ERROR . "</b></div>
 	" : ""?>
@@ -29,9 +38,9 @@ include("inc/head.inc.php");
 			<span class="welcome-screen-button-icon"><img class="icon pad-right" src="img/play.png"></span>Start Kiosk
 		</a>
 		<?=QA ? "
-			<button class='welcome-screen-button' type='button' id='recheck-for-updates'>
+			<a class='welcome-screen-button' href='?action=reset_updates' id='recheck-for-updates'>
 				Recheck for updates
-			</button>
+			</a>
 		" : ""?>
 	</div>
 </section>

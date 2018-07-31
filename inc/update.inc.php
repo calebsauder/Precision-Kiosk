@@ -1,10 +1,10 @@
 <?php
 
 	$update_error = false;
-	$sudo = true;
 	define("RUNNING_UPDATE_SCRIPT", ENV_NAME == "RASPBERRY_PI" && !$_SESSION["ran_update_script"]);
 
 	if (RUNNING_UPDATE_SCRIPT) {
+		$sudo = true;
 		define("AUTOSTART_FILE", "/home/pi/.config/lxsession/LXDE-pi/autostart");
 		$old_contents = sudo("cat " . AUTOSTART_FILE);
 		if (!$old_contents["return"]) {
@@ -28,7 +28,8 @@
 		if (!$update_error)
 			$_SESSION["ran_update_script"] = true;
 
+		define("SUDO", $sudo);
+
 	}
 
-	define("SUDO", $sudo);
 	define("UPDATE_ERROR", $update_error);
