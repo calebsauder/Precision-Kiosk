@@ -449,7 +449,7 @@ function checkForUpdates (callback) {
 
 	else { // We haven't checked for updates yet...let's do that now
 
-		sessionStorage.updateCheckWaitingOnNetwork = false;
+		sessionStorage.updateCheckWaitingOnNetwork = 0;
 
 		/**
 		 * Hide the update UI and call the post-update callback
