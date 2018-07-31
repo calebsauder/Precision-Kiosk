@@ -84,12 +84,12 @@
 	}
 
 	function get_wifi_networks(){
-		$response = array(
+		$response = [
 			'response'=>'error',
 			'error'=>'General catch',
-			'networks'=>array(),
+			'networks'=> [],
 			'current_wifi_network'=>''
-		);
+		];
 		// Mac
 		if (file_exists('/Applications/MAMP/')) {
 
@@ -99,7 +99,7 @@
 			$cmd = "/System/Library/PrivateFrameworks/Apple80211.framework/Versions/Current/Resources/airport -s"; // Mac
 			$rsp = shell_exec($cmd);
 			$response['raw'] = $rsp;
-			$blocks = array(
+			$blocks = [
 				"SSID"=>"                            SSID",
 				"BSSID"=>"BSSID             ",
 				"RSSI"=>"RSSI ",
@@ -107,11 +107,11 @@
 				"HT"=>"HT ",
 				"CC"=>"CC ",
 				"SECURITY"=>"SECURITY (auth/unicast/group)                "
-			);
+			];
 			$lines = explode("\n",$rsp);
 			unset($lines[0]);
 			foreach ($lines as $line) {
-				$network = array();
+				$network = [];
 				$c = 0;
 				foreach ($blocks as $name=>$block){
 					$value = substr($line,$c,strlen($block));
@@ -126,13 +126,13 @@
 			$cmd = "/sbin/iwlist wlan0 scan | /bin/grep ESSID";
 			$rsp = shell_exec($cmd);
 			$ESSIDs = explode("\n",trim($rsp));
-			$networks = array();
+			$networks = [];
 			foreach ($ESSIDs as $line){
 				list($junk,$ESSID) = explode("ESSID:",$line);
 				$ESSID = trim(str_replace("\"","",$ESSID));
-				array_push($networks,array(
+				array_push($networks, [
 					'SSID'=>$ESSID
-				));
+				]);
 			}
 			$response['networks'] = $networks;
 
@@ -148,18 +148,18 @@
 	}
 
 	function read_wifi_networks() {
-		$response = array(
+		$response = [
 			'response'=>'error',
 			'error'=>'General catch',
-			'networks'=>array(),
+			'networks'=> [],
 			'current_wifi_network'=>''
-		);
+		];
 		$network_config = get_networkConfig();
-		$networks = array();
+		$networks = [];
 		foreach ($network_config['networks'] as $ESSID) {
-			array_push($networks,array(
+			array_push($networks, [
 				'SSID'=>$ESSID
-			));
+			]);
 		}
 		$response['networks'] = $networks;
 		$response['current_wifi_network'] = $network_config['current_wifi_network'];
@@ -169,10 +169,10 @@
 	}
 
 	function set_wifi_network($network='',$pass=''){
-		$response = array(
+		$response = [
 			'response'=>'error',
 			'error'=>'General catch'
-		);
+		];
 
 		$network = trim($network);
 		$pass    = trim($pass);
@@ -228,10 +228,10 @@
 			$data = shell_exec('cat "'.$playlist_file.'"');
 			$data = trim($data);
 			$data = @json_decode($data,true);
-			if (!is_array($data)) $data = array();
+			if (!is_array($data)) $data = [];
 		}
 		else {
-			$data = array();
+			$data = [];
 		}
 		return $data;
 	}
@@ -264,10 +264,10 @@
 
 	function queue_set_wifi_network($network='',$pass='') {
 		global $connect_file, $tstamp;
-		$connect = array(
+		$connect = [
 			'network'=>$network,
 			'password'=>$pass
-		);
+		];
 		$fp = fopen($connect_file,"w");
 		fwrite($fp,json_encode($connect));
 		fclose($fp);
@@ -284,4 +284,13 @@
 			fwrite($fp,json_encode($network_config));
 			fclose($fp);
 		}
+	}
+
+	function run_cmd (string $cmd): array {
+		// The 2>&1 allows us to view output from stderr. See https://stackoverflow.com/a/45808461/863470 for more info
+		exec("$cmd 2>&1", $output, $return);
+		return [
+			"output" => implode("\n", $output),
+			"return" => $return
+		];
 	}

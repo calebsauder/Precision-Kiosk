@@ -93,7 +93,7 @@ else {
 				if ($rsp['response'] == 'success') {
 					$network_config['current_wifi_network'] = $rsp['current_wifi_network'];
 					echo "Success!".$lb;
-					$names = array();
+					$names = [];
 					foreach ($rsp['networks'] as $network){
 						if ($network['SSID'] != '') array_push($names,$network['SSID']);
 					}
@@ -103,7 +103,7 @@ else {
 				}
 				else {
 					echo "Error: ".$rsp['error'].$lb;
-					$networks = array();
+					$networks = [];
 				}
 				$network_config['networks'] = $networks;
 				print_r($networks);

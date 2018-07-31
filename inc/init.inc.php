@@ -21,12 +21,12 @@
 	$video_dir = $base.'videos/';
 	$video_url = 'video.php?v=';
 
-	$network_config_default = array(
+	$network_config_default = [
 		'monitoring'=>false,
 		'last_monitor'=>0,
-		'networks'=>array(),
+		'networks'=> [],
 		'current_wifi_network'=>''
-	);
+	];
 
 	// create video directory
 	if (!file_exists($video_dir)) mkdir($video_dir,0777);

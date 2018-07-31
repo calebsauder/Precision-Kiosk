@@ -4,10 +4,10 @@
 	 
 	$action = $_POST['action'];
 	
-	$response = array(
+	$response = [
 		'response'=>'error',
 		'error'=>'General catch'
-	);
+	];
 	
 	if ($action == "sync-status") {
 		$status = '';
@@ -33,7 +33,7 @@
 		$rsp = read_wifi_networks();
 		if ($rsp['response'] == 'success') {
 			$response['response'] = 'success';
-			$names = array();
+			$names = [];
 			foreach ($rsp['networks'] as $network){
 				if ($network['SSID'] != '') array_push($names,$network['SSID']);
 			}
@@ -61,7 +61,7 @@
 			$current_playlist_data .= $record[$n];
 		}
 		$current_playlist_data = @json_decode($current_playlist_data,true);
-		if (!is_array($current_playlist_data)) $current_playlist_data = array();
+		if (!is_array($current_playlist_data)) $current_playlist_data = [];
 	
 		$data = $_POST['data'];
 		$fp = fopen($playlist_file,"w");
@@ -69,13 +69,13 @@
 		fclose($fp);
 		
 		// start sync
-		$downloads = array();
+		$downloads = [];
 		$jsdata = @json_decode($data,true);
-		if (!is_array($jsdata)) $jsdata = array();
+		if (!is_array($jsdata)) $jsdata = [];
 		
 		writeSync('Beginning sync...');
 		
-		$live_files = array();
+		$live_files = [];
 		
 		$n = 1;
 		foreach ($jsdata as $video){
@@ -96,14 +96,14 @@
 			$server_last_updated = get_kioskRemoteSource($server_last_updated_url);
 			$server_last_updated = (int)$server_last_updated;
 			
-			$download = array(
+			$download = [
 				'response'=>'error',
 				'error'=>'General catch',
 				'video_id'=>$id,
 				'filename'=>$filename,
 				'server_last_updated'=>$server_last_updated,
 				'local_last_updated'=>$local_last_updated
-			);
+			];
 			writeSync($t.'...comparing time stamps');
 			if ($server_last_updated == $local_last_updated) {
 				$download['status'] = 'cached';
@@ -144,7 +144,7 @@
 		$response['downloads'] = $downloads;
 		
 		// garbage collection
-		$deleted_files = array();
+		$deleted_files = [];
 		$open = opendir($video_dir);
 		while ($file = readdir($open)) {
 			if (is_file($video_dir.$file)) {
@@ -179,11 +179,10 @@
 	}
 	
 	if ($action == "check-for-updates") {
-		// The 2>&1 allows us to view output from stderr. See https://stackoverflow.com/a/45808461/863470 for more info
-		exec("git pull 2>&1", $output, $return);
-		$response["git_rsp"] = implode("\n", $output);
+		$ret = run_cmd("git pull");
+		$response["git_rsp"] = $ret["output"];
 		// 0 means success
-		if (!$return)
+		if (!$ret["return"])
 			$response["response"] = "success";
 	}
 	
