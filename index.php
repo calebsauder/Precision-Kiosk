@@ -12,6 +12,7 @@ include("inc/head.inc.php");
 		<p id='welcome-screen-debug'>
 			QA mode: <b>On</b><br>
 			Detected environment: <b>" . ENV_NAME . "</b><br>
+			sudo privileges: <b>" . (SUDO ? "Yes" : "No") . "</b><br>
 			The update script " . (RUNNING_UPDATE_SCRIPT ? "<b>did</b>" : "did <b>not</b>") . " run
 		</p>
 	" : ""?>

@@ -1,6 +1,7 @@
 <?php
 
 	$update_error = false;
+	$sudo = true;
 	define("RUNNING_UPDATE_SCRIPT", ENV_NAME == "RASPBERRY_PI" && !$_SESSION["ran_update_script"]);
 
 	if (RUNNING_UPDATE_SCRIPT) {
@@ -21,12 +22,13 @@
 			}
 			// else - unclutter is already set up!
 		}
-		else
-			$update_error = "Sudo privileges were not available.";
+		else // we can't say this is an error because some devices don't have sudo privileges
+			$sudo = false;
 
 		if (!$update_error)
 			$_SESSION["ran_update_script"] = true;
 
 	}
 
+	define("SUDO", $sudo);
 	define("UPDATE_ERROR", $update_error);
