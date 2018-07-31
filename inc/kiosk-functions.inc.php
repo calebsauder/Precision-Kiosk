@@ -294,3 +294,7 @@
 			"return" => $return
 		];
 	}
+
+	function sudo (string $cmd): array {
+		return run_cmd("sudo $cmd");
+	}

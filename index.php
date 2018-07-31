@@ -11,8 +11,12 @@ include("inc/head.inc.php");
 	<?=QA ? "
 		<p id='welcome-screen-debug'>
 			QA mode: <b>On</b><br>
-			Detected environment: <b>" . ENV_NAME . "</b>
+			Detected environment: <b>" . ENV_NAME . "</b><br>
+			The update script " . (RUNNING_UPDATE_SCRIPT ? "<b>did</b>" : "did <b>not</b>") . " run
 		</p>
+	" : ""?>
+	<?=UPDATE_ERROR ? "
+		<div class='alert red'>The update failed with this error: <b>" . UPDATE_ERROR . "</b></div>
 	" : ""?>
 	<p><img id="main-screens-pp-logo" src="img/logo.png"></p>
 	<!--<div class='alert' id='update-alert' style='display: none'>You've been updated to the latest and greatest version of the Kiosk software!</div>-->
@@ -24,9 +28,9 @@ include("inc/head.inc.php");
 			<span class="welcome-screen-button-icon"><img class="icon pad-right" src="img/play.png"></span>Start Kiosk
 		</a>
 		<?=QA ? "
-			<a href='local-storage.php' class='welcome-screen-button'>
-				LocalStorage viewer
-			</a>
+			<button class='welcome-screen-button' type='button' id='recheck-for-updates'>
+				Recheck for updates
+			</button>
 		" : ""?>
 	</div>
 </section>

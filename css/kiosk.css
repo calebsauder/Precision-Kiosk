@@ -53,7 +53,7 @@ body.fullscreen #welcome-screen-wrapper{
 	margin: 20px 0 0 0;
 	text-align: center;
 }
-#welcome-screen-button-wrapper .welcome-screen-button:link,
+#welcome-screen-button-wrapper .welcome-screen-button,
 #welcome-screen-button-wrapper .welcome-screen-button:active,
 #welcome-screen-button-wrapper .welcome-screen-button:visited{
 	background-color: #176d39;
@@ -88,6 +88,9 @@ body.fullscreen #welcome-screen-wrapper{
 	border-radius: 6px;
 	color: white;
 	padding: 17px;
+}
+.alert.red {
+	background: #ff4c4c;
 }
 
 /* Set-up Screen */

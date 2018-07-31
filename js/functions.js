@@ -16,6 +16,10 @@ function initHomePage () {
 						showView('player');
 						return false;
 					});
+					$('#recheck-for-updates').click(() => {
+						sessionStorage.clear();
+						location.reload();
+					});
 				},
 				show () {
 					if (!QA)
@@ -461,12 +465,28 @@ function checkForUpdates (callback) {
 		// Do the actual check
 		$.post('ajax/kiosk-controller.php', { action: 'check-for-updates' }, response => {
 			if (response.response == 'success') { // We heard back from git
+
 				sessionStorage.checkedForUpdates = 1;
-				if (response.git_rsp.split('\n').reverse()[0].toLowerCase().replace(/[^a-z]/g, '') == 'alreadyuptodate')
-					hideUpdateUI();
-				else // We just applied updates from git
-					sessionStorage.showUpdateMessage = 1;
-					location.reload();
+				const gitRsp = response.git_rsp;
+
+				function completeUpdate () {
+					if (gitRsp.split('\n').reverse()[0].toLowerCase().replace(/[^a-z]/g, '') == 'alreadyuptodate')
+						hideUpdateUI();
+					else { // We just applied updates from git
+						sessionStorage.showUpdateMessage = 1;
+						location.reload();
+					}
+				}
+
+				if (QA)
+					swal({
+						title: 'git response:',
+						text: gitRsp,
+						type: 'info'
+					}, completeUpdate);
+				else
+					completeUpdate();
+
 			}
 			else { // If we get here, that means that there's currently no network
 				sessionStorage.updateCheckWaitingOnNetwork = 1;

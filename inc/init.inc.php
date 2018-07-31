@@ -52,3 +52,4 @@
 		chmod($sync_file,0777);
 	}
 
+	require "update.inc.php";
