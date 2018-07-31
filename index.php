@@ -59,7 +59,7 @@ include("inc/head.inc.php");
 <?php
 
 $ondomready .= ("
-	DEBUG = " . (isset($_GET["debug"]) ? "true" : "false") . ";
+	QA = " . (QA ? "true" : "false") . ";
 	checkForUpdates(initHomePage);
 ");
 

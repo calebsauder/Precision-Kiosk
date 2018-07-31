@@ -6,7 +6,7 @@ function initHomePage () {
 
 	// Home page views
 	const
-		AUTOPLAY_TIMEOUT = 3000,
+		AUTOPLAY_TIMEOUT = 30000,
 		$views = $('[data-view]'),
 		views = {
 
@@ -18,7 +18,7 @@ function initHomePage () {
 					});
 				},
 				show () {
-					if (!DEBUG)
+					if (!QA)
 						this.autoPlayInterval = setTimeout(() => showView('player'), AUTOPLAY_TIMEOUT);
 				},
 				hide () {
@@ -462,7 +462,7 @@ function checkForUpdates (callback) {
 		$.post('ajax/kiosk-controller.php', { action: 'check-for-updates' }, response => {
 			if (response.response == 'success') { // We heard back from git
 				sessionStorage.checkedForUpdates = 1;
-				if (response.git_rsp.toLowerCase().replace(/[^a-z]/g, '') == 'alreadyuptodate')
+				if (response.git_rsp.split('\n').reverse()[0].toLowerCase().replace(/[^a-z]/g, '') == 'alreadyuptodate')
 					hideUpdateUI();
 				else // We just applied updates from git
 					sessionStorage.showUpdateMessage = 1;

@@ -68,7 +68,7 @@
 	define("ENV_NAME", $detected_env ? $detected_env : $default_env);
 	define("ENV_CONFIG", ENVIRONMENTS[ENV_NAME]);
 	define("ROOT_URL", ENV_CONFIG["root_url"]);
-	define("QA", !!ENV_CONFIG["qa"]);
+	define("QA", !!ENV_CONFIG["qa"] || isset($_GET["qa"]));
 
 	// location below root of data directory
 	$base = $data_dir_prefix . ENV_CONFIG["data_dir"];
